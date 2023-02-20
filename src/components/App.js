@@ -9,10 +9,12 @@ import ImagePopup from "./ImagePopup";
 import { useEffect, useState } from "react";
 import api from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
 import { ProtectedRouteElement } from "./ProtectedRoute";
+import * as auth from "../utils/auth";
+import InfoTooltip from "./InfoTooltip";
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
@@ -24,16 +26,37 @@ function App() {
 
   //pr12
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [signSuccess, setSignSuccess] = useState(false);
+  const navigate = useNavigate();
+  const [isSignPopupOpen, setSignPopupOpen] = useState(false);
+  const [email, setEmail] = useState('')
 
 
   useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getDefaultCards()])
-      .then(([user, cards]) => {
-        setCurrentUser(user);
-        setCards(cards)
-      })
-      .catch(err => console.log(err))
-  }, [])
+    checkToken();
+    if (isLoggedIn) {
+      Promise.all([api.getUserInfo(), api.getDefaultCards()])
+        .then(([user, cards]) => {
+          setCurrentUser(user);
+          setCards(cards)
+        })
+        .catch(err => console.log(err));
+    }
+  }, [isLoggedIn])
+
+
+  function checkToken() {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth
+        .checkToken(jwt)
+        .then((res) => {
+          setIsLoggedIn(true);
+          setEmail(res.data.email);
+          navigate('/', { replace: true })
+        })
+    }
+  }
 
   function handleEditAvatarClick() {
     setEditAvatarPopupOpen(true);
@@ -55,6 +78,7 @@ function App() {
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
+    setSignPopupOpen(false);
     setSelectedCard(null);
   }
 
@@ -110,6 +134,42 @@ function App() {
       .catch(err => console.log(err))
   }
 
+  function handleSignup(password, email) {
+    auth
+      .register(password, email)
+      .then((res) => {
+        if (res) {
+          //console.log(res)
+          console.log(res);
+          setSignSuccess(true);
+          navigate('/sign-in', { replace: true });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setSignSuccess(false);
+      })
+      .finally(() => setSignPopupOpen(true))
+  }
+
+  function handleSignin(password, email) {
+    auth
+      .signin(password, email)
+      .then((res) => {
+        if (res) {
+          localStorage.setItem('jwt', res.token);
+          setEmail(email);
+          setIsLoggedIn(true);
+          navigate('/', { replace: true });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setSignSuccess(false);
+        setSignPopupOpen(true);
+      })
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="root">
@@ -131,11 +191,13 @@ function App() {
             } />
           <Route path='/sign-up'
             element={
-              <Register />
+              <Register
+                onSignup={handleSignup} />
             } />
           <Route path='/sign-in'
             element={
-              <Login />
+              <Login
+                onSignin={handleSignin} />
             } />
         </Routes>
 
@@ -161,6 +223,11 @@ function App() {
         <ImagePopup
           card={selectedCard}
           onClose={closeAllPopups} />
+
+        <InfoTooltip
+          isOpen={isSignPopupOpen}
+          onClose={closeAllPopups}
+          signupSuccess={signSuccess} />
 
       </div>
     </CurrentUserContext.Provider>

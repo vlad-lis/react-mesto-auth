@@ -1,5 +1,5 @@
-import success from '../images/success';
-import fail from '../images/fail'
+import success from '../images/success.svg';
+import fail from '../images/fail.svg'
 
 function InfoTooltip(props) {
     return (
@@ -13,9 +13,9 @@ function InfoTooltip(props) {
                 </button>
                 <img
                     className='pop-up__auth-img'
-                    src={props.isSuccess ? success : fail} />
-                <h3 className="pop-up__heading">
-                    {props.isSuccess
+                    src={props.signupSuccess ? success : fail} />
+                <h3 className="pop-up__heading pop-up__auth-heading">
+                    {props.signupSuccess
                     ? 'Вы успешно зарегистрировались!'
                     : 'Что-то пошло не так! Попробуйте еще раз.'}
                 </h3>
@@ -23,3 +23,5 @@ function InfoTooltip(props) {
         </div>
     )
 }
+
+export default InfoTooltip;
