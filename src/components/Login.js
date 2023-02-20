@@ -17,7 +17,6 @@ function Login({ onSignin }) {
         onSignin({ password, email });
     }
 
-
     return (
         <form className='auth__form' onSubmit={handleSubmit}>
             <h3 className='auth__title'>Вход</h3>
@@ -42,7 +41,6 @@ function Login({ onSignin }) {
             </button>
         </form>
     )
-
 }
 
 export default Login

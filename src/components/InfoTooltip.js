@@ -15,9 +15,7 @@ function InfoTooltip(props) {
                     className='pop-up__auth-img'
                     src={props.signupSuccess ? success : fail} />
                 <h3 className="pop-up__heading pop-up__auth-heading">
-                    {props.signupSuccess
-                    ? 'Вы успешно зарегистрировались!'
-                    : 'Что-то пошло не так! Попробуйте еще раз.'}
+                    {props.tooltip}
                 </h3>
             </div>
         </div>

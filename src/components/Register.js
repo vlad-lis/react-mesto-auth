@@ -48,8 +48,6 @@ function Register({ onSignup }) {
 
         </form>
     )
-
-
 }
 
 export default Register;

@@ -31,7 +31,6 @@ function App() {
   const [isSignPopupOpen, setSignPopupOpen] = useState(false);
   const [email, setEmail] = useState('')
 
-
   useEffect(() => {
     checkToken();
     if (isLoggedIn) {
@@ -44,7 +43,6 @@ function App() {
     }
   }, [isLoggedIn])
 
-
   function checkToken() {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
@@ -55,6 +53,7 @@ function App() {
           setEmail(res.data.email);
           navigate('/', { replace: true })
         })
+        .catch(err => console.log(err));
     }
   }
 
@@ -139,7 +138,6 @@ function App() {
       .register(password, email)
       .then((res) => {
         if (res) {
-          //console.log(res)
           console.log(res);
           setSignSuccess(true);
           navigate('/sign-in', { replace: true });
@@ -236,7 +234,10 @@ function App() {
         <InfoTooltip
           isOpen={isSignPopupOpen}
           onClose={closeAllPopups}
-          signupSuccess={signSuccess} />
+          signupSuccess={signSuccess}
+          tooltip={signSuccess
+            ? 'Вы успешно зарегистрировались!'
+            : 'Что-то пошло не так! Попробуйте еще раз.'} />
 
       </div>
     </CurrentUserContext.Provider>
