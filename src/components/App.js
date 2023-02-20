@@ -170,11 +170,20 @@ function App() {
       })
   }
 
+  function handleSignout() {
+    localStorage.removeItem('jwt');
+    setEmail('');
+    setIsLoggedIn(false);
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="root">
 
-        <Header />
+        <Header
+          email={email}
+          onClick={handleSignout}
+        />
         <Routes>
           <Route path='/'
             element={

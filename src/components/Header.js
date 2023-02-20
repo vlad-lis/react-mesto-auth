@@ -1,7 +1,7 @@
 import logo from '../images/logo.svg';
 import { Routes, Route, Link } from 'react-router-dom';
 
-function Header() {
+function Header({ email, onClick }) {
     return (
         <header className="header">
             <img className="header__logo" src={logo} alt="logo" />
@@ -11,8 +11,8 @@ function Header() {
                     path='/'
                     element={
                         <div className='header__nav-container'>
-                            <p className='header__email'>email</p>
-                            <Link to='/sign-in' className='header__nav-exit'>Выйти</Link>
+                            <p className='header__email'>{email}</p>
+                            <Link to='/sign-in' className='header__nav-exit' onClick={onClick}>Выйти</Link>
                         </div>
                     } />
                 <Route
